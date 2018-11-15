@@ -29,4 +29,37 @@
 	return [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970] * 1000];
 }
 
++ (void)stopDescendentScrollViews: (UIView*) view {
+	if ([view isKindOfClass:[UIScrollView class]]){
+		UIScrollView* scrollView = (UIScrollView*) view;
+		CGPoint offset = scrollView.contentOffset;
+		[scrollView setContentOffset:offset animated:NO];
+	}
+    // This won't stop nested scrollview but it will increase performance
+	else {
+	  for (UIView *subview in view.subviews) {
+		[self stopDescendentScrollViews:subview];
+	  }
+	}
+}
+
++ (UIViewController*) getTopViewController {
+	return [self getTopViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
++ (UIViewController*) getTopViewController: (UIViewController*)rootViewController {
+	if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+		UITabBarController* tabBarController = (UITabBarController*)rootViewController;
+		return [self getTopViewController:tabBarController.selectedViewController];
+	} else if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+		UINavigationController* navigationController = (UINavigationController*)rootViewController;
+		return [self getTopViewController:navigationController.visibleViewController];
+	} else if (rootViewController.presentedViewController) {
+		UIViewController* presentedViewController = rootViewController.presentedViewController;
+		return [self getTopViewController:presentedViewController];
+	} else {
+		return rootViewController;
+	}
+}
+
 @end
