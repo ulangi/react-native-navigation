@@ -1,4 +1,5 @@
 #import "RNNTabBarController.h"
+#import "RNNUtils.h"
 
 @implementation RNNTabBarController {
 	NSUInteger _currentTabIndex;
@@ -95,6 +96,12 @@
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
 	[_eventEmitter sendBottomTabSelected:@(tabBarController.selectedIndex) unselected:@(_currentTabIndex)];
 	_currentTabIndex = tabBarController.selectedIndex;
+}
+
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(nonnull UIViewController *)viewController {
+	
+	[RNNUtils stopDescendentScrollViews: tabBarController.selectedViewController.view];
+	return YES;
 }
 
 @end

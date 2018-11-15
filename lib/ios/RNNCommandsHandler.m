@@ -7,6 +7,7 @@
 #import "RNNErrorHandler.h"
 #import "RNNDefaultOptionsHelper.h"
 #import "UIViewController+RNNOptions.h"
+#import "RNNUtils.h"
 
 static NSString* const setRoot	= @"setRoot";
 static NSString* const setStackRoot	= @"setStackRoot";
@@ -94,6 +95,9 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 - (void)push:(NSString*)componentId layout:(NSDictionary*)layout completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
 	
+	UIViewController *topViewController = [RNNUtils getTopViewController];
+	[RNNUtils stopDescendentScrollViews: topViewController.view];
+
 	UIViewController<RNNLayoutProtocol> *newVc = [_controllerFactory createLayout:layout saveToStore:_store];
 	UIViewController *fromVC = [_store findComponentForId:componentId];
 	
@@ -225,6 +229,9 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)showModal:(NSDictionary*)layout completion:(RNNTransitionWithComponentIdCompletionBlock)completion {
 	[self assertReady];
+	
+	UIViewController *topViewController = [RNNUtils getTopViewController];
+	[RNNUtils stopDescendentScrollViews: topViewController.view];
 	
 	UIViewController<RNNParentProtocol> *newVc = [_controllerFactory createLayout:layout saveToStore:_store];
 	
