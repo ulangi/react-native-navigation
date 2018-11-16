@@ -35,9 +35,11 @@
 		CGPoint offset = scrollView.contentOffset;
 		[scrollView setContentOffset:offset animated:NO];
 	}
-	
-	for (UIView *subview in view.subviews) {
+    // This won't stop nested scrollview but it will increase performance
+	else {
+	  for (UIView *subview in view.subviews) {
 		[self stopDescendentScrollViews:subview];
+	  }
 	}
 }
 
