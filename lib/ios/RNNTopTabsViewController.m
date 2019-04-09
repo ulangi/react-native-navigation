@@ -2,10 +2,11 @@
 #import "RNNSegmentedControl.h"
 #import "ReactNativeNavigation.h"
 #import "RNNRootViewController.h"
+#import "UIViewController+LayoutProtocol.h"
 
 @interface RNNTopTabsViewController () {
 	NSArray* _viewControllers;
-	UIViewController<RNNParentProtocol>* _currentViewController;
+	UIViewController* _currentViewController;
 	RNNSegmentedControl* _segmentedControl;
 }
 
@@ -40,22 +41,8 @@
 	return self;
 }
 
-- (void)onChildWillAppear {
-	[_presenter applyOptions:self.resolveOptions];
-	[((UIViewController<RNNParentProtocol> *)self.parentViewController) onChildWillAppear];
-}
-
-- (RNNNavigationOptions *)resolveOptions {
-	return [(RNNNavigationOptions *)[self.getCurrentChild.resolveOptions.copy mergeOptions:self.options] withDefault:self.defaultOptions];
-}
-
-- (void)mergeOptions:(RNNNavigationOptions *)options {
-	[_presenter mergeOptions:options currentOptions:self.options defaultOptions:self.defaultOptions];
-	[((UIViewController<RNNLayoutProtocol> *)self.parentViewController) mergeOptions:options];
-}
-
-- (void)overrideOptions:(RNNNavigationOptions *)options {
-	[self.options overrideOptions:options];
+- (UIViewController *)getCurrentChild {
+	return _currentViewController;
 }
 
 - (void)createTabBar {
@@ -80,7 +67,7 @@
 }
 
 - (void)setSelectedViewControllerIndex:(NSUInteger)index {
-	UIViewController<RNNParentProtocol> *toVC = _viewControllers[index];
+	UIViewController *toVC = _viewControllers[index];
 	[_contentView addSubview:toVC.view];
 	[_currentViewController.view removeFromSuperview];
 	_currentViewController = toVC;
@@ -91,6 +78,7 @@
 	for (RNNRootViewController* childVc in viewControllers) {
 		[childVc.view setFrame:_contentView.bounds];
 //		[childVc.options.topTab applyOn:childVc];
+		[self addChildViewController:childVc];
 	}
 	
 	[self setSelectedViewControllerIndex:0];
@@ -103,16 +91,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-}
-
-#pragma mark RNNParentProtocol
-
-- (UIViewController *)getCurrentChild {
-	return _currentViewController;
-}
-
-- (UIViewController<RNNLeafProtocol> *)getCurrentLeaf {
-	return [[self getCurrentChild] getCurrentLeaf];
 }
 
 @end

@@ -1,5 +1,6 @@
 #import "RNNNavigationStackManager.h"
 #import "RNNErrorHandler.h"
+#import <React/RCTI18nUtil.h>
 
 typedef void (^RNNAnimationBlock)(void);
 
@@ -8,11 +9,18 @@ typedef void (^RNNAnimationBlock)(void);
 - (void)push:(UIViewController *)newTop onTop:(UIViewController *)onTopViewController animated:(BOOL)animated animationDelegate:(id)animationDelegate completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	UINavigationController *nvc = onTopViewController.navigationController;
 
+	if([[RCTI18nUtil sharedInstance] isRTL]) {
+		nvc.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+		nvc.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+	} else {
+		nvc.view.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+		nvc.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+	}
+
 	if (animationDelegate) {
 		nvc.delegate = animationDelegate;
 	} else {
 		nvc.delegate = nil;
-		nvc.interactivePopGestureRecognizer.delegate = nil;
 	}
 	
 	[self performAnimationBlock:^{
@@ -63,11 +71,11 @@ typedef void (^RNNAnimationBlock)(void);
 	}];
 }
 
-- (void)setStackRoot:(UIViewController *)newRoot fromViewController:(UIViewController *)fromViewController animated:(BOOL)animated completion:(RNNTransitionCompletionBlock)completion rejection:(RNNTransitionRejectionBlock)rejection {
+- (void)setStackChildren:(NSArray<UIViewController *> *)children fromViewController:(UIViewController *)fromViewController animated:(BOOL)animated completion:(RNNTransitionCompletionBlock)completion rejection:(RNNTransitionRejectionBlock)rejection {
 	UINavigationController* nvc = fromViewController.navigationController;
 	
 	[self performAnimationBlock:^{
-		[nvc setViewControllers:@[newRoot] animated:animated];
+		[nvc setViewControllers:children animated:animated];
 	} completion:completion];
 }
 

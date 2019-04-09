@@ -13,7 +13,7 @@
 
 @implementation RNNSideMenuController
 
-- (instancetype)initWithLayoutInfo:(RNNLayoutInfo *)layoutInfo childViewControllers:(NSArray *)childViewControllers options:(RNNNavigationOptions *)options defaultOptions:(RNNNavigationOptions *)defaultOptions presenter:(RNNViewControllerPresenter *)presenter {
+- (instancetype)initWithLayoutInfo:(RNNLayoutInfo *)layoutInfo creator:(id<RNNRootViewCreator>)creator childViewControllers:(NSArray *)childViewControllers options:(RNNNavigationOptions *)options defaultOptions:(RNNNavigationOptions *)defaultOptions presenter:(RNNBasePresenter *)presenter eventEmitter:(RNNEventEmitter *)eventEmitter {
 	[self setControllers:childViewControllers];
 	self = [super initWithCenterViewController:self.center leftDrawerViewController:self.left rightDrawerViewController:self.right];
 	
@@ -25,7 +25,6 @@
 	
 	self.layoutInfo = layoutInfo;
 	
-	self.openDrawerGestureModeMask = MMOpenDrawerGestureModeAll;
 	self.closeDrawerGestureModeMask = MMCloseDrawerGestureModeAll;
 	
 	[self.presenter applyOptionsOnInit:self.resolveOptions];
@@ -35,34 +34,6 @@
 	self.edgesForExtendedLayout |= UIRectEdgeBottom;
 	
 	return self;
-}
-
-- (void)willMoveToParentViewController:(UIViewController *)parent {
-	if (parent) {
-		[_presenter applyOptionsOnWillMoveToParentViewController:self.resolveOptions];
-	}
-}
-
-- (UITabBarItem *)tabBarItem {
-	return self.center.tabBarItem;
-}
-
-- (void)onChildWillAppear {
-	[_presenter applyOptions:self.resolveOptions];
-	[((UIViewController<RNNParentProtocol> *)self.parentViewController) onChildWillAppear];
-}
-
-- (RNNNavigationOptions *)resolveOptions {
-	return [(RNNNavigationOptions *)[self.getCurrentChild.resolveOptions.copy mergeOptions:self.options] withDefault:self.defaultOptions];
-}
-
-- (void)mergeOptions:(RNNNavigationOptions *)options {
-	[_presenter mergeOptions:options currentOptions:self.options defaultOptions:self.defaultOptions];
-	[((UIViewController<RNNLayoutProtocol> *)self.parentViewController) mergeOptions:options];
-}
-
-- (void)overrideOptions:(RNNNavigationOptions *)options {
-	[self.options overrideOptions:options];
 }
 
 - (void)setAnimationType:(NSString *)animationType {
@@ -81,9 +52,11 @@
 	switch (side) {
 		case MMDrawerSideRight:
 			self.maximumRightDrawerWidth = width;
+			[self.right setWidth:width];
 			break;
 		case MMDrawerSideLeft:
 			self.maximumLeftDrawerWidth = width;
+			[self.left setWidth:width];
 		default:
 			break;
 	}
@@ -115,7 +88,6 @@
 		default:
 			break;
 	}
-	self.openDrawerGestureModeMask = enabled ? MMOpenDrawerGestureModeAll : MMOpenDrawerGestureModeNone;
 }
 
 -(void)setControllers:(NSArray*)controllers {
@@ -133,6 +105,8 @@
 			else if(child.type == RNNSideMenuChildTypeRight) {
 				self.right = child;
 			}
+			
+			[self addChildViewController:child];
 		}
 		
 		else {
@@ -161,10 +135,6 @@
 
 - (UIViewController<RNNLayoutProtocol> *)getCurrentChild {
 	return self.center;
-}
-
-- (UIViewController<RNNLeafProtocol> *)getCurrentLeaf {
-	return [[self getCurrentChild] getCurrentLeaf];
 }
 
 @end
