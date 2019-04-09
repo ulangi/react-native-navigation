@@ -1,3 +1,8 @@
+### A Fork from wix/react-native-navigation
+- Fix scroll view causes touchables unresponsive (fix/scrollview)
+- Fix right alignment on Android (fix/menu-item-padding)
+- Fix crash when dismissing modal (fix/crash-when-dismiss-modal)
+
 ![npm](https://img.shields.io/npm/dw/react-native-navigation.svg)
 [![npm (tag)](https://img.shields.io/npm/v/react-native-navigation/latest.svg)](https://github.com/wix/react-native-navigation/tree/master)
 [![npm (tag)](https://img.shields.io/npm/v/react-native-navigation/snapshot.svg)](https://github.com/wix/react-native-navigation/tree/master)
