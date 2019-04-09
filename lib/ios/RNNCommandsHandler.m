@@ -7,6 +7,7 @@
 #import "RNNErrorHandler.h"
 #import "RNNDefaultOptionsHelper.h"
 #import "UIViewController+RNNOptions.h"
+#import "RNNUtils.h"
 #import "React/RCTI18nUtil.h"
 #import "UIViewController+LayoutProtocol.h"
 
@@ -114,6 +115,9 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 - (void)push:(NSString*)componentId commandId:(NSString*)commandId layout:(NSDictionary*)layout completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
 	
+	UIViewController *topViewController = [RNNUtils getTopViewController];
+	[RNNUtils stopDescendentScrollViews: topViewController.view];
+
 	UIViewController *newVc = [_controllerFactory createLayout:layout];
 	UIViewController *fromVC = [_store findComponentForId:componentId];
 	
@@ -248,7 +252,11 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 - (void)showModal:(NSDictionary*)layout commandId:(NSString *)commandId completion:(RNNTransitionWithComponentIdCompletionBlock)completion {
 	[self assertReady];
 	
+	UIViewController *topViewController = [RNNUtils getTopViewController];
+	[RNNUtils stopDescendentScrollViews: topViewController.view];
+	
 	UIViewController *newVc = [_controllerFactory createLayout:layout];
+>>>>>>> 2e0acc20021983ce0a6e8c5d405c5565eb3a9cfe
 	
 	[newVc renderTreeAndWait:[newVc.resolveOptions.animations.showModal.waitForRender getWithDefaultValue:NO] perform:^{
 		[_modalManager showModal:newVc animated:[newVc.getCurrentChild.resolveOptions.animations.showModal.enable getWithDefaultValue:YES] hasCustomAnimation:newVc.getCurrentChild.resolveOptions.animations.showModal.hasCustomAnimation completion:^(NSString *componentId) {
