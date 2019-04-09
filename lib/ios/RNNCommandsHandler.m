@@ -256,7 +256,6 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 	[RNNUtils stopDescendentScrollViews: topViewController.view];
 	
 	UIViewController *newVc = [_controllerFactory createLayout:layout];
->>>>>>> 2e0acc20021983ce0a6e8c5d405c5565eb3a9cfe
 	
 	[newVc renderTreeAndWait:[newVc.resolveOptions.animations.showModal.waitForRender getWithDefaultValue:NO] perform:^{
 		[_modalManager showModal:newVc animated:[newVc.getCurrentChild.resolveOptions.animations.showModal.enable getWithDefaultValue:YES] hasCustomAnimation:newVc.getCurrentChild.resolveOptions.animations.showModal.hasCustomAnimation completion:^(NSString *componentId) {
