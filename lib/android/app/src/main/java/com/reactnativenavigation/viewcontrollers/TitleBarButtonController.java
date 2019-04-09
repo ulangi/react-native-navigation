@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import com.reactnativenavigation.parse.params.Button;
 import com.reactnativenavigation.parse.params.Text;
 import com.reactnativenavigation.utils.ArrayUtils;
 import com.reactnativenavigation.utils.ButtonPresenter;
+import com.reactnativenavigation.utils.CustomActionProvider;
 import com.reactnativenavigation.utils.ImageLoader;
 import com.reactnativenavigation.utils.ImageLoadingListenerAdapter;
 import com.reactnativenavigation.utils.UiUtils;
@@ -125,10 +127,15 @@ public class TitleBarButtonController extends ViewController<TitleBarReactButton
         MenuItem menuItem = toolbar.getMenu().add(Menu.NONE, position, position, button.text.get(""));
         if (button.showAsAction.hasValue()) menuItem.setShowAsAction(button.showAsAction.get());
         menuItem.setEnabled(button.enabled.isTrueOrUndefined());
-        menuItem.setOnMenuItemClickListener(this);
+        //menuItem.setOnMenuItemClickListener(this);
         if (button.hasComponent()) {
             menuItem.setActionView(getView());
         } else {
+            // Use CustomActionProvider to make action item looks like that of iOS
+            CustomActionProvider actionProvider = new CustomActionProvider(toolbar.getContext(), menuItem);
+            actionProvider.setOnClickMenuItemListener(this);
+            actionProvider.setHorizontalPadding(toolbar.getContentInsetStart());
+
             if (button.hasIcon()) {
                 loadIcon(new ImageLoadingListenerAdapter() {
                     @Override
@@ -137,12 +144,14 @@ public class TitleBarButtonController extends ViewController<TitleBarReactButton
                         TitleBarButtonController.this.icon = icon;
                         setIconColor(icon);
                         menuItem.setIcon(icon);
+                        MenuItemCompat.setActionProvider(menuItem, actionProvider);
                     }
                 });
             } else {
                 optionsPresenter.setTextColor();
                 if (button.fontSize.hasValue()) optionsPresenter.setFontSize(menuItem);
                 optionsPresenter.setTypeFace(button.fontFamily);
+                MenuItemCompat.setActionProvider(menuItem, actionProvider);
             }
         }
         setTestId(toolbar, button.testId);
