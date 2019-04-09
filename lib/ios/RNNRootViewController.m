@@ -231,9 +231,9 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self.view];
 	self.view = nil;
-	self.navigationItem.titleView = nil;
-	self.navigationItem.rightBarButtonItems = nil;
-	self.navigationItem.leftBarButtonItems = nil;
+	//self.navigationItem.titleView = nil;
+	//self.navigationItem.rightBarButtonItems = nil;
+	//self.navigationItem.leftBarButtonItems = nil;
 }
 
 @end
