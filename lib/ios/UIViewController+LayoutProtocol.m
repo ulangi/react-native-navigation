@@ -9,7 +9,8 @@
 						   options:(RNNNavigationOptions *)options
 					defaultOptions:(RNNNavigationOptions *)defaultOptions
 						 presenter:(RNNBasePresenter *)presenter
-					  eventEmitter:(RNNEventEmitter *)eventEmitter {
+					  eventEmitter:(RNNEventEmitter *)eventEmitter
+			  childViewControllers:(NSArray *)childViewControllers {
 	self = [self init];
 	
 	self.options = options;
@@ -17,16 +18,15 @@
 	self.layoutInfo = layoutInfo;
 	self.creator = creator;
 	self.eventEmitter = eventEmitter;
+	if ([self respondsToSelector:@selector(setViewControllers:)]) {
+		[self performSelector:@selector(setViewControllers:) withObject:childViewControllers];
+	}
 	self.presenter = presenter;
 	[self.presenter bindViewController:self];
-	[self.presenter applyOptionsOnInit:self.options];
+	[self.presenter applyOptionsOnInit:self.resolveOptions];
+	
 
 	return self;
-}
-
-- (void)setStore:(RNNStore *)store {
-	objc_setAssociatedObject(self, @selector(store), store, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-	[self.store setComponent:self componentId:self.layoutInfo.componentId];
 }
 
 - (RNNNavigationOptions *)resolveOptions {
@@ -81,11 +81,6 @@
 	}
 }
 
-- (void)dealloc {
-	[self.store removeComponent:self.layoutInfo.componentId];
-}
-
-
 #pragma mark getters and setters to associated object
 
 - (RNNNavigationOptions *)options {
@@ -126,10 +121,6 @@
 
 - (void)setEventEmitter:(RNNEventEmitter *)eventEmitter {
 	objc_setAssociatedObject(self, @selector(eventEmitter), eventEmitter, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (RNNStore *)store {
-	return objc_getAssociatedObject(self, @selector(store));
 }
 
 - (id<RNNRootViewCreator>)creator {

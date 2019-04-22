@@ -1,6 +1,8 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UIViewController+LayoutProtocol.h"
+#import "RNNViewControllerPresenter.h"
+#import "RCTConvert+Modal.h"
 
 @interface UIViewController_LayoutProtocolTest : XCTestCase
 
@@ -17,18 +19,24 @@
     self.uut.layoutInfo.componentId = @"componentId";
 }
 
-- (void)testSetStoreShouldSaveComponent {
-    RNNStore* store = [[RNNStore alloc] init];
-    [self.uut setStore:store];
-    XCTAssertNotNil([store findComponentForId:self.uut.layoutInfo.componentId]);
+- (void)testInitWithLayoutApplyDefaultOptions {
+    RNNViewControllerPresenter* presenter = [[RNNViewControllerPresenter alloc] init];
+    RNNNavigationOptions* options = [[RNNNavigationOptions alloc] initEmptyOptions];
+    RNNNavigationOptions* defaultOptions = [[RNNNavigationOptions alloc] initEmptyOptions];
+    defaultOptions.modalPresentationStyle = [[Text alloc] initWithValue:@"fullScreen"];
+
+    UIViewController* uut = [[UIViewController alloc] initWithLayoutInfo:nil creator:nil options:options defaultOptions:defaultOptions presenter:presenter eventEmitter:nil childViewControllers:nil];
+    XCTAssertEqual(uut.modalPresentationStyle, [RCTConvert UIModalPresentationStyle:@"fullScreen"]);
 }
 
-- (void)testDeallocShouldRemoveComponentFromStore {
-    RNNStore* store = [[RNNStore alloc] init];
-    [self.uut setStore:store];
-    XCTAssertNotNil([store findComponentForId:self.uut.layoutInfo.componentId]);
-    self.uut = nil;
-    XCTAssertNil([store findComponentForId:self.uut.layoutInfo.componentId]);
+- (void)testInitWithLayoutInfoShouldSetChildViewControllers {
+	UIViewController* child1 = [UIViewController new];
+	UIViewController* child2 = [UIViewController new];
+	NSArray* childViewControllers = @[child1, child2];
+	UINavigationController* uut = [[UINavigationController alloc] initWithLayoutInfo:nil creator:nil options:nil defaultOptions:nil presenter:nil eventEmitter:nil childViewControllers:childViewControllers];
+	
+	XCTAssertEqual(uut.viewControllers[0], child1);
+	XCTAssertEqual(uut.viewControllers[1], child2);
 }
 
 

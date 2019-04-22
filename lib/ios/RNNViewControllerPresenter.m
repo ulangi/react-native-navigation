@@ -17,16 +17,6 @@
 
 @implementation RNNViewControllerPresenter
 
-- (instancetype)init {
-	self = [super init];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(cleanReactLeftovers)
-												 name:RCTJavaScriptWillStartLoadingNotification
-											   object:nil];
-	
-	return self;
-}
-
 - (instancetype)initWithComponentRegistry:(RNNReactComponentRegistry *)componentRegistry {
 	self = [self init];
 	_componentRegistry = componentRegistry;
@@ -183,6 +173,7 @@
 		BOOL isCenter = [alignment isEqualToString:@"center"];
 		__weak RNNReactView *weakTitleView = _customTitleView;
 		CGRect frame = viewController.navigationController.navigationBar.bounds;
+		[_customTitleView setFrame:frame];
 		[_customTitleView setRootViewDidChangeIntrinsicSize:^(CGSize intrinsicContentSize) {
 			if (isCenter) {
 				[weakTitleView setFrame:CGRectMake(0, 0, intrinsicContentSize.width, intrinsicContentSize.height)];
@@ -220,8 +211,5 @@
 	[_componentRegistry clearComponentsForParentId:self.bindedComponentId];
 }
 
-- (void)cleanReactLeftovers {
-	_customTitleView = nil;
-}
 
 @end

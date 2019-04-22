@@ -11,14 +11,10 @@
 @synthesize previewCallback;
 
 - (instancetype)initWithLayoutInfo:(RNNLayoutInfo *)layoutInfo rootViewCreator:(id<RNNRootViewCreator>)creator eventEmitter:(RNNEventEmitter *)eventEmitter presenter:(RNNViewControllerPresenter *)presenter options:(RNNNavigationOptions *)options defaultOptions:(RNNNavigationOptions *)defaultOptions {
-	self = [super initWithLayoutInfo:layoutInfo creator:creator options:options defaultOptions:defaultOptions presenter:presenter eventEmitter:eventEmitter];
+	self = [super initWithLayoutInfo:layoutInfo creator:creator options:options defaultOptions:defaultOptions presenter:presenter eventEmitter:eventEmitter childViewControllers:nil];
 	
 	self.animator = [[RNNAnimator alloc] initWithTransitionOptions:self.resolveOptions.customTransition];
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(onJsReload)
-												 name:RCTJavaScriptWillStartLoadingNotification
-											   object:nil];
 	self.navigationController.delegate = self;
 	
 	return self;
@@ -84,7 +80,7 @@
 			}
 		}];
 	}];
-
+	
 	self.view = reactView;
 	
 	if (!wait && readyBlock) {
@@ -211,29 +207,6 @@
 
 -(void)onButtonPress:(RNNUIBarButtonItem *)barButtonItem {
 	[self.eventEmitter sendOnNavigationButtonPressed:self.layoutInfo.componentId buttonId:barButtonItem.buttonId];
-}
-
-/**
- *	fix for #877, #878
- */
--(void)onJsReload {
-	[self cleanReactLeftovers];
-}
-
-/**
- * fix for #880
- */
--(void)dealloc {
-	[self cleanReactLeftovers];
-}
-
--(void)cleanReactLeftovers {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[[NSNotificationCenter defaultCenter] removeObserver:self.view];
-	self.view = nil;
-	//self.navigationItem.titleView = nil;
-	//self.navigationItem.rightBarButtonItems = nil;
-	//self.navigationItem.leftBarButtonItems = nil;
 }
 
 @end

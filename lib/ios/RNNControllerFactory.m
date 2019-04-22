@@ -18,7 +18,7 @@
 
 @implementation RNNControllerFactory {
 	id<RNNRootViewCreator> _creator;
-	RNNStore *_store;
+	RNNExternalComponentStore *_store;
 	RCTBridge *_bridge;
 	RNNReactComponentRegistry* _componentRegistry;
 }
@@ -28,7 +28,7 @@
 
 - (instancetype)initWithRootViewCreator:(id <RNNRootViewCreator>)creator
 						   eventEmitter:(RNNEventEmitter*)eventEmitter
-								  store:(RNNStore *)store
+								  store:(RNNExternalComponentStore *)store
 					   componentRegistry:(RNNReactComponentRegistry *)componentRegistry
 							  andBridge:(RCTBridge *)bridge {
 	
@@ -107,8 +107,6 @@
 		@throw [NSException exceptionWithName:@"UnknownControllerType" reason:[@"Unknown controller type " stringByAppendingString:node.type] userInfo:nil];
 	}
 	
-	result.store = _store;
-	
 	return result;
 }
 
@@ -143,8 +141,7 @@
 	
 	NSArray *childViewControllers = [self extractChildrenViewControllersFromNode:node];
 	
-	RNNNavigationController* stack = [[RNNNavigationController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter];
-	[stack setViewControllers:childViewControllers];
+	RNNNavigationController* stack = [[RNNNavigationController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter childViewControllers:childViewControllers];
 	
 	return stack;
 }
@@ -156,8 +153,7 @@
 
 	NSArray *childViewControllers = [self extractChildrenViewControllersFromNode:node];
 	
-	RNNTabBarController* tabsController = [[RNNTabBarController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter];
-	[tabsController setViewControllers:childViewControllers];
+	RNNTabBarController* tabsController = [[RNNTabBarController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter childViewControllers:childViewControllers];
 	
 	return tabsController;
 }
@@ -169,8 +165,7 @@
 
 	NSArray *childViewControllers = [self extractChildrenViewControllersFromNode:node];
 	
-	RNNTopTabsViewController* topTabsController = [[RNNTopTabsViewController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter];
-	[topTabsController setViewControllers:childViewControllers];
+	RNNTopTabsViewController* topTabsController = [[RNNTopTabsViewController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter childViewControllers:childViewControllers];
 	
 	return topTabsController;
 }
@@ -193,7 +188,7 @@
 	RNNLayoutInfo* layoutInfo = [[RNNLayoutInfo alloc] initWithNode:node];
 	RNNNavigationOptions* options = [[RNNNavigationOptions alloc] initWithDict:node.data[@"options"]];;
 
-	RNNSideMenuChildVC *sideMenuChild = [[RNNSideMenuChildVC alloc] initWithLayoutInfo:layoutInfo childViewControllers:@[childVc] options:options defaultOptions:_defaultOptions presenter:[[RNNViewControllerPresenter alloc] init] type:type];
+	RNNSideMenuChildVC *sideMenuChild = [[RNNSideMenuChildVC alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:[[RNNViewControllerPresenter alloc] init] eventEmitter:_eventEmitter childViewController:childVc type:type];
 	
 	return sideMenuChild;
 }
@@ -205,8 +200,7 @@
 
 	NSArray *childViewControllers = [self extractChildrenViewControllersFromNode:node];
 
-	RNNSplitViewController* splitViewController = [[RNNSplitViewController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter];
-	[splitViewController bindChildViewControllers:childViewControllers];
+	RNNSplitViewController* splitViewController = [[RNNSplitViewController alloc] initWithLayoutInfo:layoutInfo creator:_creator options:options defaultOptions:_defaultOptions presenter:presenter eventEmitter:_eventEmitter childViewControllers:childViewControllers];
 	
 	return splitViewController;
 }
