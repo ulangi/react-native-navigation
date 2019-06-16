@@ -236,6 +236,10 @@ export interface OptionsTopBarBackground {
    */
   component?: {
     name?: string;
+    /**
+     * Properties to pass down to the component
+     */
+    passProps?: object;
   };
   /**
    * Allows the NavBar to be translucent (blurred)
@@ -305,6 +309,11 @@ export interface OptionsTopBarButton {
    * Set testID for reference in E2E tests
    */
   testID?: string;
+  /**
+   * (Android only) Set showAsAction value
+   * @see {@link https://developer.android.com/guide/topics/resources/menu-resource|Android developer guide: Menu resource} 
+   */
+  showAsAction?: 'ifRoom' | 'withText' | 'always' | 'never';
 }
 
 export interface OptionsTopBar {
@@ -323,7 +332,11 @@ export interface OptionsTopBar {
   /**
    * Change button colors in the top bar
    */
-  buttonColor?: Color;
+
+  leftButtonColor?: Color;
+  rightButtonColor?: Color;
+  leftButtonDisabledColor?: Color;
+  rightButtonDisabledColor?: Color;
   /**
    * Draw behind the navbar
    */
