@@ -78,6 +78,12 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 	UIViewController *vc = [_controllerFactory createLayout:layout[@"root"]];
 	
 	[vc renderTreeAndWait:[vc.resolveOptions.animations.setRoot.waitForRender getWithDefaultValue:NO] perform:^{
+	  
+		// Use bottom tab color to set root background color
+		if(vc.options.bottomTabs.backgroundColor.hasValue) {
+ 			[vc rnn_setBackgroundColor:vc.options.bottomTabs.backgroundColor.get];
+ 		}
+	  
 		_mainWindow.rootViewController = vc;
 		[_eventEmitter sendOnNavigationCommandCompletion:setRoot commandId:commandId params:@{@"layout": layout}];
 		completion() ;
@@ -96,6 +102,10 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 		[vc overrideOptions:newOptions];
 		[vc mergeOptions:newOptions];
 		
+		// Use bottom tab color to set root background color
+		if(vc.options.bottomTabs.backgroundColor.hasValue) {
+			[vc rnn_setBackgroundColor:vc.options.bottomTabs.backgroundColor.get];
+		}
 		[CATransaction commit];
 	}
 }
