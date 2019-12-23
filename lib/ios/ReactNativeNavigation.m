@@ -36,6 +36,10 @@
     return [RNNLayoutManager findComponentForId:componentId];
 }
 
++ (void)setJSCodeLocation:(NSURL *)jsCodeLocation {
+	[[ReactNativeNavigation sharedInstance].bridgeManager setJSCodeLocation:jsCodeLocation];
+}
+
 # pragma mark - instance
 
 + (instancetype) sharedInstance {
@@ -63,9 +67,7 @@
 
 - (UIWindow *)initializeKeyWindow {
 	UIWindow* keyWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-	keyWindow.backgroundColor = [UIColor whiteColor];
 	UIApplication.sharedApplication.delegate.window = keyWindow;
-	
 	return keyWindow;
 }
 

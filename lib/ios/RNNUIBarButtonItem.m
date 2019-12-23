@@ -32,20 +32,23 @@
 	reactView.sizeFlexibility = RCTRootViewSizeFlexibilityWidthAndHeight;
 	reactView.delegate = self;
 	reactView.backgroundColor = [UIColor clearColor];
+    reactView.hidden = CGRectEqualToRect(reactView.frame, CGRectZero);
+    
+	[NSLayoutConstraint deactivateConstraints:reactView.constraints];
 	self.widthConstraint = [NSLayoutConstraint constraintWithItem:reactView
 														attribute:NSLayoutAttributeWidth
 														relatedBy:NSLayoutRelationEqual
 														   toItem:nil
 														attribute:NSLayoutAttributeNotAnAttribute
 													   multiplier:1.0
-														 constant:1.0];
+														 constant:reactView.intrinsicContentSize.width];
 	self.heightConstraint = [NSLayoutConstraint constraintWithItem:reactView
 														 attribute:NSLayoutAttributeHeight
 														 relatedBy:NSLayoutRelationEqual
 														   	toItem:nil
 														 attribute:NSLayoutAttributeNotAnAttribute
 													   	multiplier:1.0
-														  constant:1.0];
+														  constant:reactView.intrinsicContentSize.height];
 	[NSLayoutConstraint activateConstraints:@[self.widthConstraint, self.heightConstraint]];
 	self.buttonId = buttonId;
 	return self;
@@ -61,9 +64,9 @@
 - (void)rootViewDidChangeIntrinsicSize:(RCTRootView *)rootView {
 	self.widthConstraint.constant = rootView.intrinsicContentSize.width;
 	self.heightConstraint.constant = rootView.intrinsicContentSize.height;
-	[rootView setFrame:CGRectMake(0, 0, rootView.intrinsicContentSize.width, rootView.intrinsicContentSize.height)];
 	[rootView setNeedsUpdateConstraints];
 	[rootView updateConstraintsIfNeeded];
+    rootView.hidden = NO;
 }
 
 - (void)onButtonPressed {

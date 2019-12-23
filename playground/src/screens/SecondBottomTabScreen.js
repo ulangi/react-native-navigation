@@ -22,7 +22,11 @@ class SecondBottomTabScreen extends React.Component {
       },
       bottomTab: {
         icon: require('../../img/star.png'),
-        text: 'Tab 2'
+        text: 'Tab 2',
+        dotIndicator: {
+          visible: true,
+          color: 'green'
+        }
       }
     };
   }
@@ -30,26 +34,37 @@ class SecondBottomTabScreen extends React.Component {
   render() {
     return (
       <Root componentId={this.props.componentId}>
+        <Button label='Push' onPress={this.push} />
         <Button label='Push BottomTabs' testID={PUSH_BTN} onPress={this.pushBottomTabs} />
         <Button label='SideMenu inside BottomTabs' testID={SIDE_MENU_INSIDE_BOTTOM_TABS_BTN} onPress={this.sideMenuInsideBottomTabs} />
       </Root>
     );
   }
 
+  push = () => Navigation.push(this, Screens.Pushed);
+
   pushBottomTabs = () => Navigation.push(this, {
     bottomTabs: {
+      options: {
+        _layout: {
+          backgroundColor: '#99ff29'
+        },
+        _bottomTabs: {
+          visible: false
+        }
+      },
       children: [
         component(Screens.Pushed, {
           bottomTab: {
             icon: require('../../img/whatshot.png'),
-            text: 'Tab 1',
+            text: 'Tab A',
             testID: PUSHED_BOTTOM_TABS
           }
         }),
         component(Screens.Pushed, {
           bottomTab: {
             icon: require('../../img/star.png'),
-            text: 'Tab 2'
+            text: 'Tab B'
           }
         })
       ]

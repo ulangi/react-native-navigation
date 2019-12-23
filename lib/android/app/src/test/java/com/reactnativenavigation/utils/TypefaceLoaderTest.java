@@ -1,7 +1,7 @@
 package com.reactnativenavigation.utils;
 
-import android.content.*;
-import android.graphics.*;
+import android.content.Context;
+import android.graphics.Typeface;
 
 import com.reactnativenavigation.*;
 
@@ -47,7 +47,9 @@ public class TypefaceLoaderTest extends BaseTest {
 
     @Test
     public void loadTypefaceNull() {
-        Mockito.doReturn(null).when(uut).getTypefaceFromAssets(null);
+        Context context = Mockito.mock(Context.class);
+        TypefaceLoader mockedLoader = Mockito.spy(new TypefaceLoader(context));
+        Mockito.doReturn(null).when(mockedLoader).getTypefaceFromAssets(null);
 
         Typeface typeface = uut.getTypeFace(null);
         assertThat(typeface).isNull();

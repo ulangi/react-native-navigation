@@ -10,15 +10,15 @@
 @implementation RNNSideMenuChildVC
 
 
-- (instancetype)initWithLayoutInfo:(RNNLayoutInfo *)layoutInfo creator:(id<RNNRootViewCreator>)creator options:(RNNNavigationOptions *)options defaultOptions:(RNNNavigationOptions *)defaultOptions presenter:(RNNBasePresenter *)presenter eventEmitter:(RNNEventEmitter *)eventEmitter childViewController:(UIViewController *)childViewController type:(RNNSideMenuChildType)type {
+- (instancetype)initWithLayoutInfo:(RNNLayoutInfo *)layoutInfo creator:(id<RNNComponentViewCreator>)creator options:(RNNNavigationOptions *)options defaultOptions:(RNNNavigationOptions *)defaultOptions presenter:(RNNBasePresenter *)presenter eventEmitter:(RNNEventEmitter *)eventEmitter childViewController:(UIViewController *)childViewController type:(RNNSideMenuChildType)type {
 	self = [super initWithLayoutInfo:layoutInfo creator:creator options:options defaultOptions:defaultOptions presenter:presenter eventEmitter:eventEmitter childViewControllers:nil];
 	self.type = type;
 	self.child = childViewController;
 	return self;
 }
 
-- (void)renderTreeAndWait:(BOOL)wait perform:(RNNReactViewReadyCompletionBlock)readyBlock {
-	[self.getCurrentChild renderTreeAndWait:wait perform:readyBlock];
+- (void)render {
+	[self.getCurrentChild render];
 }
 
 - (void)setChild:(UIViewController<RNNLayoutProtocol> *)child {
@@ -40,11 +40,7 @@
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
-	return self.child.preferredStatusBarStyle;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-	return self.child.supportedInterfaceOrientations;
+	return [[self presenter] getStatusBarStyle:[self resolveOptions]];
 }
 
 @end

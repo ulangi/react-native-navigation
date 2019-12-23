@@ -19,6 +19,7 @@ public class EventEmitter {
     private static final String ComponentDidDisappear = "RNN.ComponentDidDisappear";
     private static final String NavigationButtonPressed = "RNN.NavigationButtonPressed";
     private static final String ModalDismissed = "RNN.ModalDismissed";
+    private static final String ScreenPopped = "RNN.ScreenPopped";
     @Nullable
     private ReactContext reactContext;
 
@@ -58,8 +59,9 @@ public class EventEmitter {
         emit(BottomTabSelected, event);
     }
 
-    public void emitCommandCompleted(String commandId, long completionTime) {
+    public void emitCommandCompleted(String commandName, String commandId, long completionTime) {
         WritableMap event = Arguments.createMap();
+        event.putString("commandName", commandName);
         event.putString("commandId", commandId);
         event.putDouble("completionTime", completionTime);
         emit(CommandCompleted, event);
@@ -70,6 +72,12 @@ public class EventEmitter {
         event.putString("componentId", id);
         event.putInt("modalsDismissed", modalsDismissed);
         emit(ModalDismissed, event);
+    }
+
+    public void emitScreenPoppedEvent(String componentId) {
+        WritableMap event = Arguments.createMap();
+        event.putString("componentId", componentId);
+        emit(ScreenPopped, event);
     }
 
     private void emit(String eventName) {

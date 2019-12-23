@@ -1,14 +1,18 @@
 package com.reactnativenavigation.utils;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 
 public class CollectionUtils {
     public interface Apply<T> {
@@ -98,6 +102,17 @@ public class CollectionUtils {
         return null;
     }
 
+    public static @Nullable <T> T first(@Nullable Collection<T> items, Filter<T> by, Functions.Func1<T> apply) {
+        if (isNullOrEmpty(items)) return null;
+        for (T item : items) {
+            if (by.filter(item)) {
+                apply.run(item);
+                return item;
+            }
+        }
+        return null;
+    }
+
     public static <T> T last(@Nullable List<T> items) {
         return CollectionUtils.isNullOrEmpty(items) ? null : items.get(items.size() - 1);
     }
@@ -136,4 +151,23 @@ public class CollectionUtils {
         return t == null ? Collections.EMPTY_LIST : t.values();
     }
 
+    public static <T> boolean equals(@Nullable Collection<T> a, @Nullable Collection<T> b) {
+        if (size(a) != size(b)) return false;
+        return reduce(zip(a, b), true, (p, currentValue) -> currentValue && Objects.equals(p.first, p.second));
+    }
+
+    public static int size(@Nullable Collection items) {
+        return items == null ? 0 : items.size();
+    }
+
+    public static <T> Collection<Pair<T, T>> zip(@Nullable Collection<T> a, @Nullable Collection<T> b) {
+        if (a == null || b == null) return new ArrayList<>();
+        Iterator iter1 = a.iterator();
+        Iterator iter2 = b.iterator();
+        ArrayList<Pair<T,T>> result = new ArrayList<>();
+        while (iter1.hasNext() && iter2.hasNext()) {
+            result.add(new Pair(iter1.next(), iter2.next()));
+        }
+        return result;
+    }
 }

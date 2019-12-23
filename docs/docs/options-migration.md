@@ -371,7 +371,7 @@ topBar: {
 ```
 
 ## modalPresentationStyle
-Controls he behavior of screens displayed modally. 
+Controls the behavior of screens displayed modally. 
 
 ### Options supported on iOS
 * overCurrentContext - Content is displayed over the previous screen. Useful for **transparent modals**
@@ -512,7 +512,7 @@ Use iOS 11 large title
 # Android Options
 
 ## topBarElevationShadowEnabled
-TopBar elevation in dp. Set this value to `0` to disable the TopBa's shadow.
+TopBar elevation in dp. Set this value to `0` to disable the TopBar's shadow.
 
 ```js
 topBar: {
@@ -536,6 +536,15 @@ StatusBar color
 
 ```js
 statusBar: {
+  backgroundColor: 'red'
+}
+```
+
+## navigationBarColor
+NavigationBar color
+
+```js
+navigationBar: {
   backgroundColor: 'red'
 }
 ```
@@ -603,7 +612,6 @@ topBar: {
 * topBarShadowOffset
 * topBarShadowRadius
 * preferredContentSize
-* navigationBarColor
 * navBarSubTitleTextCentered
 * collapsingToolBarImage
 * collapsingToolBarCollapsedColor
