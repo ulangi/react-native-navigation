@@ -78,7 +78,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
     [vc setReactViewReadyCallback:^{
       // Use bottom tab color to set root background color
       if(vc.options.bottomTabs.backgroundColor.hasValue) {
-        [vc rnn_setBackgroundColor:vc.options.bottomTabs.backgroundColor.get];
+        [vc setBackgroundColor:vc.options.bottomTabs.backgroundColor.get];
       }
 	  
         _mainWindow.rootViewController = vc;
@@ -102,7 +102,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 		
 		// Use bottom tab color to set root background color
 		if(vc.options.bottomTabs.backgroundColor.hasValue) {
-			[vc rnn_setBackgroundColor:vc.options.bottomTabs.backgroundColor.get];
+			[vc setBackgroundColor:vc.options.bottomTabs.backgroundColor.get];
 		}
 		[CATransaction commit];
 	}
