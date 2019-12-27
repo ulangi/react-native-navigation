@@ -13,6 +13,7 @@ public class TitleBarReactView extends ReactView {
         super(context, reactInstanceManager, componentId, componentName);
     }
 
+    /* Disable this method so that the view can fill whole tool bar
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(
@@ -20,4 +21,5 @@ public class TitleBarReactView extends ReactView {
                 heightMeasureSpec
         );
     }
+    */
 }
