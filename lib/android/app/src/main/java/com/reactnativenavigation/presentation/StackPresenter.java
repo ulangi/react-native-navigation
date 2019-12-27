@@ -177,6 +177,8 @@ public class StackPresenter {
         topBar.setTitleTopMargin(topBarOptions.title.topMargin.get(0));
 
         if (topBarOptions.title.component.hasValue()) {
+            // If custom view is used, then remove contentInsets
+            topBar.getTitleBar().setContentInsetsRelative(0, 0);
             if (titleControllers.containsKey(component)) {
                 topBar.setTitleComponent(titleControllers.get(component).getView());
             } else {
@@ -415,6 +417,8 @@ public class StackPresenter {
         if (topBarOptions.title.topMargin.hasValue()) topBar.setTitleTopMargin(topBarOptions.title.topMargin.get());
 
         if (topBarOptions.title.component.hasValue()) {
+            // If custom view is used, then remove contentInsets
+            topBar.getTitleBar().setContentInsetsRelative(0, 0);
             if (titleControllers.containsKey(component)) {
                 topBar.setTitleComponent(titleControllers.get(component).getView());
             } else {
@@ -486,7 +490,11 @@ public class StackPresenter {
     }
 
     private LayoutParams getComponentLayoutParams(com.reactnativenavigation.parse.Component component) {
-        return new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, component.alignment == Alignment.Center ? Gravity.CENTER : Gravity.START);
+        if (component.alignment == Alignment.Fill) {
+            return new Toolbar.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, Gravity.FILL);
+        } else {
+            return new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, component.alignment == Alignment.Center ? Gravity.CENTER : Gravity.START);
+        }
     }
 
     @RestrictTo(RestrictTo.Scope.TESTS)
