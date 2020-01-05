@@ -5,7 +5,8 @@
   "license": "MIT",
   "nativePackage": true,
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "bugs": {
     "url": "https://github.com/wix/react-native-navigation/issues"
