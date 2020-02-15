@@ -68,11 +68,6 @@
 
 #pragma mark UITabBarControllerDelegate
 
-- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
-  [RNNUtils stopDescendentScrollViews: tabBarController.selectedViewController.view];
-  return YES;
-}
-
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
 	[self.eventEmitter sendBottomTabSelected:@(tabBarController.selectedIndex) unselected:@(_currentTabIndex)];
 	_currentTabIndex = tabBarController.selectedIndex;
@@ -87,6 +82,8 @@
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
 {
+    [RNNUtils stopDescendentScrollViews: tabBarController.selectedViewController.view];
+
     NSUInteger _index = [tabBarController.viewControllers indexOfObject:viewController];
     [self.eventEmitter sendBottomTabPressed:@(_index)];
     

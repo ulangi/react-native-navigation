@@ -61,6 +61,7 @@
 	} else {
 		return rootViewController;
 	}
+}
 
 BOOL RNNIsMainQueue() {
   static void *mainQueueKey = &mainQueueKey;
