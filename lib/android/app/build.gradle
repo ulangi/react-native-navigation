@@ -79,6 +79,10 @@ android {
             dimension "RNN.reactNativeVersion"
             buildConfigField("int", "REACT_NATVE_VERSION_MINOR", "60")
         }
+        reactNative62 {
+            dimension "RNN.reactNativeVersion"
+            buildConfigField("int", "REACT_NATVE_VERSION_MINOR", "62")
+        }
     }
 }
 
@@ -97,7 +101,7 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'com.google.android.material:material:1.1.0-alpha08'
 
-    implementation 'com.github.wix-playground:ahbottomnavigation:3.0.8'
+    implementation 'com.github.wix-playground:ahbottomnavigation:3.1.2'
     implementation 'com.github.wix-playground:reflow-animator:1.0.4'
     implementation 'com.github.clans:fab:1.6.4'
 

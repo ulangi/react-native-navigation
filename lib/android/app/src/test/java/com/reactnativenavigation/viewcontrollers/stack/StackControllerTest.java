@@ -22,7 +22,7 @@ import com.reactnativenavigation.parse.params.Bool;
 import com.reactnativenavigation.parse.params.Text;
 import com.reactnativenavigation.presentation.RenderChecker;
 import com.reactnativenavigation.presentation.StackPresenter;
-import com.reactnativenavigation.react.EventEmitter;
+import com.reactnativenavigation.react.events.EventEmitter;
 import com.reactnativenavigation.utils.CommandListenerAdapter;
 import com.reactnativenavigation.utils.StatusBarUtils;
 import com.reactnativenavigation.utils.TitleBarHelper;
@@ -32,6 +32,7 @@ import com.reactnativenavigation.utils.ViewUtils;
 import com.reactnativenavigation.viewcontrollers.ChildControllersRegistry;
 import com.reactnativenavigation.viewcontrollers.ParentController;
 import com.reactnativenavigation.viewcontrollers.ViewController;
+import com.reactnativenavigation.viewcontrollers.button.IconResolver;
 import com.reactnativenavigation.viewcontrollers.topbar.TopBarController;
 import com.reactnativenavigation.views.StackLayout;
 import com.reactnativenavigation.views.element.ElementTransitionManager;
@@ -95,7 +96,7 @@ public class StackControllerTest extends BaseTest {
         StatusBarUtils.saveStatusBarHeight(63);
         animator = spy(new NavigationAnimator(activity, Mockito.mock(ElementTransitionManager.class)));
         childRegistry = new ChildControllersRegistry();
-        presenter = spy(new StackPresenter(activity, new TitleBarReactViewCreatorMock(), new TopBarBackgroundViewCreatorMock(), new TopBarButtonCreatorMock(), ImageLoaderMock.mock(), new RenderChecker(), new Options()));
+        presenter = spy(new StackPresenter(activity, new TitleBarReactViewCreatorMock(), new TopBarBackgroundViewCreatorMock(), new TopBarButtonCreatorMock(), new IconResolver(activity, ImageLoaderMock.mock()), new RenderChecker(), new Options()));
         child1 = spy(new SimpleViewController(activity, childRegistry, "child1", new Options()));
         child1a = spy(new SimpleViewController(activity, childRegistry, "child1", new Options()));
         child2 = spy(new SimpleViewController(activity, childRegistry, "child2", new Options()));
@@ -241,6 +242,18 @@ public class StackControllerTest extends BaseTest {
         InOrder inOrder = inOrder(pushListener, backListener);
         inOrder.verify(pushListener).onSuccess(any());
         inOrder.verify(backListener).onSuccess(any());
+    }
+
+    @Test
+    public void push_rejectIfStackContainsChildWithId() {
+        disablePushAnimation(child1);
+        uut.push(child1, new CommandListenerAdapter());
+        assertThat(uut.size()).isEqualTo(1);
+
+        CommandListenerAdapter listener = spy(new CommandListenerAdapter());
+        uut.push(child1a, listener);
+        verify(listener).onError(any());
+        assertThat(uut.size()).isEqualTo(1);
     }
 
     @Test
@@ -1133,6 +1146,16 @@ public class StackControllerTest extends BaseTest {
         options.topBar.drawBehind = new Bool(true);
         child1.mergeOptions(options);
         assertThat(uut.getTopInset(child1)).isEqualTo(0);
+    }
+
+    @Test
+    public void getTopInset_defaultOptionsAreTakenIntoAccount() {
+        assertThat(uut.getTopInset(child1)).isEqualTo(topBarController.getHeight());
+        Options defaultOptions = new Options();
+        defaultOptions.topBar.drawBehind = new Bool(true);
+        uut.setDefaultOptions(defaultOptions);
+
+        assertThat(uut.getTopInset(child1)).isZero();
     }
 
     private void assertContainsOnlyId(String... ids) {

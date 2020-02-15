@@ -4,13 +4,13 @@
 #import <ReactNativeNavigation/RNNComponentViewController.h>
 #import "RNNTestRootViewCreator.h"
 
-@interface RNNNavigationControllerTest : XCTestCase
+@interface RNNStackControllerTest : XCTestCase
 
 @property (nonatomic, strong) RNNStackController *uut;
 
 @end
 
-@implementation RNNNavigationControllerTest {
+@implementation RNNStackControllerTest {
 	RNNComponentViewController* _vc1;
 	id _vc2Mock;
 	RNNComponentViewController* _vc2;
@@ -18,18 +18,20 @@
 	RNNNavigationOptions* _options;
 	RNNTestRootViewCreator* _creator;
 	RNNEventEmitter* _eventEmitter;
+	id _presenter;
 }
 
 - (void)setUp {
     [super setUp];
+	_presenter = [OCMockObject partialMockForObject:[[RNNStackPresenter alloc] init]];
 	_eventEmitter = [OCMockObject niceMockForClass:[RNNEventEmitter class]];
 	_creator = [[RNNTestRootViewCreator alloc] init];
-	_vc1 = [[RNNComponentViewController alloc] initWithLayoutInfo:nil rootViewCreator:nil eventEmitter:nil presenter:[OCMockObject partialMockForObject:[[RNNComponentPresenter alloc] init]] options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:[[RNNNavigationOptions alloc] initEmptyOptions]];
-	_vc2 = [[RNNComponentViewController alloc] initWithLayoutInfo:nil rootViewCreator:nil eventEmitter:nil presenter:[[RNNComponentPresenter alloc] init] options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:[[RNNNavigationOptions alloc] initEmptyOptions]];
+	_vc1 = [[RNNComponentViewController alloc] initWithLayoutInfo:[RNNLayoutInfo new] rootViewCreator:nil eventEmitter:nil presenter:[OCMockObject partialMockForObject:[[RNNComponentPresenter alloc] init]] options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:[[RNNNavigationOptions alloc] initEmptyOptions]];
+	_vc2 = [[RNNComponentViewController alloc] initWithLayoutInfo:[RNNLayoutInfo new] rootViewCreator:nil eventEmitter:nil presenter:[[RNNComponentPresenter alloc] init] options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:[[RNNNavigationOptions alloc] initEmptyOptions]];
 	_vc2Mock = [OCMockObject partialMockForObject:_vc2];
 	_vc3 = [UIViewController new];
 	_options = [OCMockObject partialMockForObject:[[RNNNavigationOptions alloc] initEmptyOptions]];
-	self.uut = [[RNNStackController alloc] initWithLayoutInfo:nil creator:_creator options:_options defaultOptions:nil presenter:[OCMockObject partialMockForObject:[[RNNStackPresenter alloc] init]] eventEmitter:_eventEmitter childViewControllers:@[_vc1, _vc2]];
+	self.uut = [[RNNStackController alloc] initWithLayoutInfo:nil creator:_creator options:_options defaultOptions:nil presenter:_presenter eventEmitter:_eventEmitter childViewControllers:@[_vc1, _vc2]];
 }
 
 - (void)testInitWithLayoutInfo_shouldBindPresenter {
@@ -51,6 +53,12 @@
 
 - (void)testGetLeafViewController_shouldReturnTopViewController {
 	XCTAssertTrue(self.uut.getCurrentChild == self.uut.topViewController);
+}
+
+- (void)testCurrentChild_shouldReturnLastChildWithLayoutInfo {
+	[self.uut addChildViewController:[UIViewController new]];
+	XCTAssertTrue(self.uut.getCurrentChild != self.uut.topViewController);
+	XCTAssertTrue(self.uut.getCurrentChild == self.uut.childViewControllers[self.uut.childViewControllers.count-2]);
 }
 
 - (void)testPreferredStatusBarStyle_shouldReturnLeafPreferredStatusBarStyle {
@@ -159,6 +167,22 @@
 	[(RNNNavigationOptions*)[(id)self.uut.options expect] overrideOptions:overrideOptions];
 	[self.uut overrideOptions:overrideOptions];
 	[(id)self.uut.options verify];
+}
+
+- (void)testMergeChildOptionsShouldUpdatePresenterForVisibleChild {
+	RNNNavigationOptions* options = [[RNNNavigationOptions alloc] initEmptyOptions];
+	
+	[[_presenter expect] mergeOptions:options resolvedOptions:[OCMArg any]];
+	[self.uut mergeChildOptions:options child:self.uut.childViewControllers.lastObject];
+	[_presenter verify];
+}
+
+- (void)testMergeChildOptionsShouldNotUpdatePresenterForInvisibleChild {
+	RNNNavigationOptions* options = [[RNNNavigationOptions alloc] initEmptyOptions];
+	
+	[[_presenter reject] mergeOptions:options resolvedOptions:self.uut.resolveOptions];
+	[self.uut mergeChildOptions:options child:self.uut.childViewControllers.firstObject];
+	[_presenter verify];
 }
 
 - (RNNStackController *)createNavigationControllerWithOptions:(RNNNavigationOptions *)options {

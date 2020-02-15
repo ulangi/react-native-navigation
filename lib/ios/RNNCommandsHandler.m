@@ -8,6 +8,7 @@
 #import "UIViewController+LayoutProtocol.h"
 #import "RNNLayoutManager.h"
 #import "UIViewController+Utils.h"
+#import "RNNAssert.h"
 
 static NSString* const setRoot	= @"setRoot";
 static NSString* const setStackRoot	= @"setStackRoot";
@@ -53,6 +54,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)setRoot:(NSDictionary*)layout commandId:(NSString*)commandId completion:(RNNTransitionCompletionBlock)completion {
 	[self assertReady];
+    RNNAssertMainQueue();
 	
 	if (@available(iOS 9, *)) {
 		if(_controllerFactory.defaultOptions.layout.direction.hasValue) {
@@ -91,6 +93,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)mergeOptions:(NSString*)componentId options:(NSDictionary*)mergeOptions completion:(RNNTransitionCompletionBlock)completion {
 	[self assertReady];
+    RNNAssertMainQueue();
 	
 	UIViewController<RNNLayoutProtocol>* vc = [RNNLayoutManager findComponentForId:componentId];
 	RNNNavigationOptions* newOptions = [[RNNNavigationOptions alloc] initWithDict:mergeOptions];
@@ -110,6 +113,8 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)setDefaultOptions:(NSDictionary*)optionsDict completion:(RNNTransitionCompletionBlock)completion {
 	[self assertReady];
+    RNNAssertMainQueue();
+    
 	RNNNavigationOptions* defaultOptions = [[RNNNavigationOptions alloc] initWithDict:optionsDict];
 	[_controllerFactory setDefaultOptions:defaultOptions];
 	
@@ -121,6 +126,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)push:(NSString*)componentId commandId:(NSString*)commandId layout:(NSDictionary*)layout completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
+    RNNAssertMainQueue();
 	
 	UIViewController *topViewController = [RNNUtils getTopViewController];
 	[RNNUtils stopDescendentScrollViews: topViewController.view];
@@ -185,6 +191,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)setStackRoot:(NSString*)componentId commandId:(NSString*)commandId children:(NSArray*)children completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
+    RNNAssertMainQueue();
 	
 	NSArray<UIViewController *> *childViewControllers = [_controllerFactory createChildrenLayout:children];
 	for (UIViewController<RNNLayoutProtocol>* viewController in childViewControllers) {
@@ -210,7 +217,8 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)pop:(NSString*)componentId commandId:(NSString*)commandId mergeOptions:(NSDictionary*)mergeOptions completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
-	
+	RNNAssertMainQueue();
+    
 	RNNComponentViewController *vc = (RNNComponentViewController*)[RNNLayoutManager findComponentForId:componentId];
 	RNNNavigationOptions *options = [[RNNNavigationOptions alloc] initWithDict:mergeOptions];
 	[vc overrideOptions:options];
@@ -235,6 +243,8 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)popTo:(NSString*)componentId commandId:(NSString*)commandId mergeOptions:(NSDictionary *)mergeOptions completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
+    RNNAssertMainQueue();
+    
 	RNNComponentViewController *vc = (RNNComponentViewController*)[RNNLayoutManager findComponentForId:componentId];
 	RNNNavigationOptions *options = [[RNNNavigationOptions alloc] initWithDict:mergeOptions];
 	[vc overrideOptions:options];
@@ -247,6 +257,8 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)popToRoot:(NSString*)componentId commandId:(NSString*)commandId mergeOptions:(NSDictionary *)mergeOptions completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
+    RNNAssertMainQueue();
+    
 	RNNComponentViewController *vc = (RNNComponentViewController*)[RNNLayoutManager findComponentForId:componentId];
 	RNNNavigationOptions *options = [[RNNNavigationOptions alloc] initWithDict:mergeOptions];
 	[vc overrideOptions:options];
@@ -268,6 +280,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)showModal:(NSDictionary*)layout commandId:(NSString *)commandId completion:(RNNTransitionWithComponentIdCompletionBlock)completion {
 	[self assertReady];
+    RNNAssertMainQueue();
 	
 	UIViewController *topViewController = [RNNUtils getTopViewController];
 	[RNNUtils stopDescendentScrollViews: topViewController.view];
@@ -286,6 +299,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)dismissModal:(NSString*)componentId commandId:(NSString*)commandId mergeOptions:(NSDictionary *)mergeOptions completion:(RNNTransitionCompletionBlock)completion rejection:(RNNTransitionRejectionBlock)reject {
 	[self assertReady];
+    RNNAssertMainQueue();
 	
 	UIViewController *modalToDismiss = (UIViewController *)[RNNLayoutManager findComponentForId:componentId];
 	
@@ -309,6 +323,7 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)dismissAllModals:(NSDictionary *)mergeOptions commandId:(NSString*)commandId completion:(RNNTransitionCompletionBlock)completion {
 	[self assertReady];
+    RNNAssertMainQueue();
 	
 	[CATransaction begin];
 	[CATransaction setCompletionBlock:^{
@@ -323,7 +338,8 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)showOverlay:(NSDictionary *)layout commandId:(NSString*)commandId completion:(RNNTransitionCompletionBlock)completion {
 	[self assertReady];
-	
+    RNNAssertMainQueue();
+    
 	UIViewController* overlayVC = [_controllerFactory createLayout:layout];
     [overlayVC setReactViewReadyCallback:^{UIWindow* overlayWindow = [[RNNOverlayWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         overlayWindow.rootViewController = overlayVC;
@@ -343,6 +359,8 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)dismissOverlay:(NSString*)componentId commandId:(NSString*)commandId completion:(RNNTransitionCompletionBlock)completion rejection:(RNNTransitionRejectionBlock)reject {
 	[self assertReady];
+    RNNAssertMainQueue();
+    
 	UIViewController* viewController = [RNNLayoutManager findComponentForId:componentId];
 	if (viewController) {
 		[_overlayManager dismissOverlay:viewController];
@@ -368,6 +386,10 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 
 - (void)dismissedModal:(UIViewController *)viewController {
 	[_eventEmitter sendModalsDismissedEvent:viewController.layoutInfo.componentId numberOfModalsDismissed:@(1)];
+}
+
+- (void)attemptedToDismissModal:(UIViewController *)viewController {
+    [_eventEmitter sendModalAttemptedToDismissEvent:viewController.layoutInfo.componentId];
 }
 
 - (void)dismissedMultipleModals:(NSArray *)viewControllers {

@@ -52,8 +52,8 @@
 	RNNNavigationOptions* defaultOptions = [[RNNNavigationOptions alloc] initEmptyOptions];
 		defaultOptions.bottomTab.text = [[Text alloc] initWithValue:@"default text"];
 		defaultOptions.bottomTab.selectedIconColor = [[Color alloc] initWithValue:UIColor.blueColor];
-
-	UIViewController* child = [[UIViewController alloc] initWithLayoutInfo:nil creator:nil options:childOptions defaultOptions:defaultOptions presenter:presenter eventEmitter:nil childViewControllers:nil];
+	
+	UIViewController* child = [[UIViewController alloc] initWithLayoutInfo:[RNNLayoutInfo new] creator:nil options:childOptions defaultOptions:defaultOptions presenter:presenter eventEmitter:nil childViewControllers:nil];
     RNNStackController* parent = [[RNNStackController alloc] initWithLayoutInfo:nil creator:nil options:parentOptions defaultOptions:defaultOptions presenter:presenter eventEmitter:nil childViewControllers:@[child]];
 
     XCTAssertEqual([parent getCurrentChild], child);
@@ -63,10 +63,11 @@
 
 - (void)testMergeOptions_invokedOnParentViewController {
     id parent = [OCMockObject partialMockForObject:[RNNStackController new]];
+	RNNStackController* uut = [[RNNStackController alloc] initWithLayoutInfo:nil creator:nil options:nil defaultOptions:nil presenter:nil eventEmitter:nil childViewControllers:nil];
+	
     RNNNavigationOptions * toMerge = [[RNNNavigationOptions alloc] initEmptyOptions];
-    [(UIViewController *) [parent expect] mergeChildOptions:toMerge];
-
-    RNNStackController* uut = [[RNNStackController alloc] initWithLayoutInfo:nil creator:nil options:nil defaultOptions:nil presenter:nil eventEmitter:nil childViewControllers:nil];
+	[(UIViewController *) [parent expect] mergeChildOptions:toMerge child:uut];
+    
     [parent addChildViewController:uut];
 
     [uut mergeOptions:toMerge];
@@ -88,10 +89,10 @@
 
     RNNNavigationOptions * childOptions = [[RNNNavigationOptions alloc] initEmptyOptions];
     childOptions.bottomTab.text = [[Text alloc] initWithValue:@"Child tab text"];
-    UIViewController* child = [[UIViewController alloc] initWithLayoutInfo:nil creator:nil options:childOptions defaultOptions:nil presenter:[RNNComponentPresenter new] eventEmitter:nil childViewControllers:nil];
+    UIViewController* child = [[UIViewController alloc] initWithLayoutInfo:[RNNLayoutInfo new] creator:nil options:childOptions defaultOptions:nil presenter:[RNNComponentPresenter new] eventEmitter:nil childViewControllers:nil];
     RNNNavigationOptions * initialOptions = [[RNNNavigationOptions alloc] initEmptyOptions];
     initialOptions.topBar.title.text = [[Text alloc] initWithValue:@"Initial title"];
-    RNNStackController* uut = [[RNNStackController alloc] initWithLayoutInfo:nil creator:nil options:initialOptions defaultOptions:nil presenter:presenter eventEmitter:nil childViewControllers:@[child]];
+    RNNStackController* uut = [[RNNStackController alloc] initWithLayoutInfo:[RNNLayoutInfo new] creator:nil options:initialOptions defaultOptions:nil presenter:presenter eventEmitter:nil childViewControllers:@[child]];
     [parent addChildViewController:uut];
 
 	[uut mergeOptions:toMerge];
@@ -105,6 +106,16 @@
 
 	[uut mergeOptions:toMerge];
 	XCTAssertEqual(uut.resolveOptions.topBar.title.text.get, @"merged");
+}
+
+- (void)testLayout_shouldExtendedLayoutIncludesOpaqueBars {
+	UIViewController* component = [[UIViewController alloc] initWithLayoutInfo:nil creator:nil options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:nil presenter:nil eventEmitter:nil childViewControllers:nil];
+	UINavigationController* stack = [[UINavigationController alloc] initWithLayoutInfo:nil creator:nil options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:nil presenter:nil eventEmitter:nil childViewControllers:nil];
+	UITabBarController* tabBar = [[UITabBarController alloc] initWithLayoutInfo:nil creator:nil options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:nil presenter:nil eventEmitter:nil childViewControllers:nil];
+	
+	XCTAssertTrue(component.extendedLayoutIncludesOpaqueBars);
+	XCTAssertTrue(stack.extendedLayoutIncludesOpaqueBars);
+	XCTAssertTrue(tabBar.extendedLayoutIncludesOpaqueBars);
 }
 
 @end

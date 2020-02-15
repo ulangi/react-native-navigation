@@ -1,6 +1,6 @@
 {
   "name": "@ulangi/react-native-navigation",
-  "version": "4.0.9-patch.6",
+  "version": "4.8.4-patch.1",
   "description": "React Native Navigation - truly native navigation for iOS and Android",
   "license": "MIT",
   "nativePackage": true,
@@ -71,7 +71,6 @@
     "@types/react-test-renderer": "16.x.x",
     "babel-jest": "24.9.x",
     "detox": "14.x.x",
-    "handlebars": "4.x.x",
     "jest": "24.9.x",
     "lodash": "^4.17.15",
     "metro-react-native-babel-preset": "0.57.x",
@@ -100,17 +99,20 @@
     },
     "roots": [
       "<rootDir>/node_modules/",
-      "<rootDir>/lib/dist/",
+      "<rootDir>/lib/src/",
       "<rootDir>/integration/"
     ],
     "collectCoverageFrom": [
-      "lib/dist/**/*.js",
+      "!lib/src/**/*.js",
       "integration/**/*.js",
-      "!lib/dist/index.js",
-      "!lib/dist/Navigation.js",
-      "!lib/dist/adapters/**/*",
-      "!lib/dist/interfaces/**/*",
-      "!lib/dist/**/*.test.*",
+      "lib/src/**/*.ts",
+      "lib/src/**/*.tsx",
+      "!lib/src/index.ts",
+      "!lib/src/types.ts",
+      "!lib/src/Navigation.ts",
+      "!lib/src/adapters/**/*",
+      "!lib/src/interfaces/**/*",
+      "!lib/src/**/*.test.*",
       "!integration/**/*.test.*",
       "!integration/*.test.*"
     ],

@@ -3,15 +3,42 @@ import { ImageRequireSource, Insets } from 'react-native';
 
 type Color = string;
 type FontFamily = string;
-type FontWeight = 'regular' | 'bold' | 'thin' | 'ultraLight' | 'light' | 'medium' | 'semibold' | 'heavy' | 'black';
+type FontWeight =
+  | 'regular'
+  | 'bold'
+  | 'thin'
+  | 'ultraLight'
+  | 'light'
+  | 'medium'
+  | 'semibold'
+  | 'heavy'
+  | 'black';
 type LayoutOrientation = 'portrait' | 'landscape';
 type AndroidDensityNumber = number;
-type SystemItemIcon = 'done' | 'cancel' | 'edit'
-  | 'save' | 'add' | 'flexibleSpace' | 'fixedSpace'
-  | 'compose' | 'reply' | 'action' | 'organize'
-  | 'bookmarks' | 'search' | 'refresh' | 'stop'
-  | 'camera' | 'trash' | 'play' | 'pause'
-  | 'rewind' | 'fastForward' | 'undo' | 'redo';
+type SystemItemIcon =
+  | 'done'
+  | 'cancel'
+  | 'edit'
+  | 'save'
+  | 'add'
+  | 'flexibleSpace'
+  | 'fixedSpace'
+  | 'compose'
+  | 'reply'
+  | 'action'
+  | 'organize'
+  | 'bookmarks'
+  | 'search'
+  | 'refresh'
+  | 'stop'
+  | 'camera'
+  | 'trash'
+  | 'play'
+  | 'pause'
+  | 'rewind'
+  | 'fastForward'
+  | 'undo'
+  | 'redo';
 
 export interface OptionsSplitView {
   /**
@@ -280,8 +307,8 @@ export interface OptionsTopBarButton {
    */
   icon?: ImageRequireSource;
   /**
-  * Set the button icon insets
-  */
+   * Set the button icon insets
+   */
   iconInsets?: IconInsets;
   /**
    * Set the button as a custom component
@@ -301,6 +328,10 @@ export interface OptionsTopBarButton {
    * Set the button text
    */
   text?: string;
+  /**
+   * Overrides the text that's read by the screen reader when the user interacts with the element
+   */
+  accessibilityLabel?: string;
   /**
    * Set the button font family
    */
@@ -532,7 +563,11 @@ export interface OptionsBottomTabs {
    * Control the text display mode below the tab icon
    * #### (Android specific)
    */
-  titleDisplayMode?: 'alwaysShow' | 'showWhenActive' | 'alwaysHide';
+  titleDisplayMode?:
+    | 'alwaysShow'
+    | 'showWhenActive'
+    | 'alwaysHide'
+    | 'showWhenActiveForce';
   /**
    * Set the elevation of the Bottom Tabs in dp
    * #### (Android specific)
@@ -541,18 +576,18 @@ export interface OptionsBottomTabs {
 }
 
 export interface DotIndicatorOptions {
-    // default red
-    color?: Color;
-    // default 6
-    size?: number;
-    // default false
-    visible?: boolean;
+  // default red
+  color?: Color;
+  // default 6
+  size?: number;
+  // default false
+  visible?: boolean;
 }
 
 export type ImageResource = string;
 
 export interface OptionsBottomTab {
-    dotIndicator?: DotIndicatorOptions;
+  dotIndicator?: DotIndicatorOptions;
 
   /**
    * Set the text to display below the icon
@@ -595,7 +630,7 @@ export interface OptionsBottomTab {
    * Set the text font family
    */
   fontFamily?: FontFamily;
-    /**
+  /**
    * Set the font weight, ignore fontFamily and use the iOS system fonts instead
    * #### (iOS specific)
    */
@@ -629,6 +664,11 @@ export interface OptionsBottomTab {
    * #### (Android specific)
    */
   selectedFontSize?: number;
+  /**
+   * If it's set to false, pressing a tab won't select the tab
+   * instead it will emit a bottomTabPressedEvent
+   */
+  selectTabOnPress?: boolean;
 }
 
 export interface SideMenuSide {

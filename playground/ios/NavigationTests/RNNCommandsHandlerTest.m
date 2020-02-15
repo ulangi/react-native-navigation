@@ -83,7 +83,7 @@
 	return [[RNNComponentViewController alloc] initWithLayoutInfo:layoutInfo rootViewCreator:_creator eventEmitter:nil presenter:[RNNComponentPresenter new] options:[[RNNNavigationOptions alloc] initWithDict:@{}] defaultOptions:nil];
 }
 
-- (void)testAssertReadyForEachMethodThrowsExceptoins {
+- (void)testAssertReadyForEachMethodThrowsExceptions {
 	NSArray* methods = [self getPublicMethodNamesForObject:self.uut];
 	[self.uut setReadyToReceiveCommands:false];
 	for (NSString* methodName in methods) {
@@ -94,7 +94,7 @@
 	}
 }
 
--(NSArray*) getPublicMethodNamesForObject:(NSObject*)obj{
+- (NSArray*)getPublicMethodNamesForObject:(NSObject*)obj {
 	NSMutableArray* skipMethods = [NSMutableArray new];
 	
 	[skipMethods addObject:@"initWithControllerFactory:eventEmitter:stackManager:modalManager:overlayManager:mainWindow:"];
@@ -103,6 +103,7 @@
 	[skipMethods addObject:@"readyToReceiveCommands"];
 	[skipMethods addObject:@".cxx_destruct"];
 	[skipMethods addObject:@"dismissedModal:"];
+	[skipMethods addObject:@"attemptedToDismissModal:"];
 	[skipMethods addObject:@"dismissedMultipleModals:"];
 	
 	NSMutableArray* result = [NSMutableArray new];
@@ -130,7 +131,7 @@
 	RNNLayoutInfo* layoutInfo = [RNNLayoutInfo new];
 	RNNTestRootViewCreator* creator = [[RNNTestRootViewCreator alloc] init];
 	
-	RNNComponentPresenter* presenter = [[RNNComponentPresenter alloc] init];
+	RNNComponentPresenter* presenter = [[RNNComponentPresenter alloc] initWithComponentRegistry:nil defaultOptions:nil];
 	RNNComponentViewController* vc = [[RNNComponentViewController alloc] initWithLayoutInfo:layoutInfo rootViewCreator:creator eventEmitter:nil presenter:presenter options:initialOptions defaultOptions:nil];
 	
 	RNNStackController* nav = [[RNNStackController alloc] initWithLayoutInfo:nil creator:creator options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:nil presenter:[[RNNStackPresenter alloc] init] eventEmitter:nil childViewControllers:@[vc]];
@@ -153,7 +154,7 @@
 	RNNNavigationOptions* initialOptions = [[RNNNavigationOptions alloc] initWithDict:@{}];
 	initialOptions.topBar.title.text = [[Text alloc] initWithValue:@"the title"];
 	
-	RNNComponentPresenter* presenter = [[RNNComponentPresenter alloc] init];
+	RNNComponentPresenter* presenter = [[RNNComponentPresenter alloc] initWithComponentRegistry:nil defaultOptions:nil];
 	RNNComponentViewController* vc = [[RNNComponentViewController alloc] initWithLayoutInfo:nil rootViewCreator:[[RNNTestRootViewCreator alloc] init] eventEmitter:nil presenter:presenter options:initialOptions defaultOptions:nil];
 	
 	__unused RNNStackController* nav = [[RNNStackController alloc] initWithRootViewController:vc];

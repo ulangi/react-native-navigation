@@ -31,12 +31,12 @@
 - (void)mergeOptions:(RNNNavigationOptions *)options {
     [self.options overrideOptions:options];
     [self.presenter mergeOptions:options resolvedOptions:self.resolveOptions];
-    [self.parentViewController mergeChildOptions:options];
+    [self.parentViewController mergeChildOptions:options child:self];
 }
 
-- (void)mergeChildOptions:(RNNNavigationOptions *)options {
+- (void)mergeChildOptions:(RNNNavigationOptions *)options child:(UIViewController *)child {
     [self.presenter mergeOptions:options resolvedOptions:self.resolveOptions];
-	[self.parentViewController mergeChildOptions:options];
+    [self.parentViewController mergeChildOptions:options child:child];
 }
 
 - (RNNNavigationOptions *)resolveOptions {
@@ -49,6 +49,10 @@
 
 - (void)overrideOptions:(RNNNavigationOptions *)options {
 	[self.options overrideOptions:options];
+}
+
+- (BOOL)extendedLayoutIncludesOpaqueBars {
+    return YES;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
@@ -80,11 +84,18 @@
 }
 
 - (UIViewController *)getCurrentChild {
+    for (UIViewController* childViewController in self.childViewControllers.reverseObjectEnumerator.allObjects) {
+        if (childViewController.layoutInfo) {
+            return childViewController;
+        }
+    }
+    
     return nil;
 }
 
 - (UIViewController *)presentedComponentViewController {
-    return self.getCurrentChild ? self.getCurrentChild.presentedComponentViewController : self;
+    UIViewController* currentChild = self.getCurrentChild;
+    return currentChild ? currentChild.presentedComponentViewController : self;
 }
 
 - (UIViewController *)topMostViewController {
@@ -114,7 +125,17 @@
 
 - (void)onChildWillAppear {
 	[self.presenter applyOptions:self.resolveOptions];
-	[((UISplitViewController *)self.parentViewController) onChildWillAppear];
+	[self.parentViewController onChildWillAppear];
+}
+
+- (void)componentDidAppear {
+    [self.presenter componentDidAppear];
+    [self.parentViewController componentDidAppear];
+}
+
+- (void)componentDidDisappear {
+    [self.presenter componentDidDisappear];
+    [self.parentViewController componentDidDisappear];
 }
 
 - (void)willMoveToParentViewController:(UIViewController *)parent {

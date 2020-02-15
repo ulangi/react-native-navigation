@@ -9,7 +9,7 @@ import com.reactnativenavigation.parse.Options;
 import com.reactnativenavigation.presentation.Presenter;
 import com.reactnativenavigation.presentation.StackPresenter;
 import com.reactnativenavigation.react.Constants;
-import com.reactnativenavigation.react.EventEmitter;
+import com.reactnativenavigation.react.events.EventEmitter;
 import com.reactnativenavigation.utils.CommandListener;
 import com.reactnativenavigation.utils.CommandListenerAdapter;
 import com.reactnativenavigation.utils.CompatUtils;
@@ -146,6 +146,10 @@ public class StackController extends ParentController<StackLayout> {
     }
 
     public void push(ViewController child, CommandListener listener) {
+        if (findController(child.getId()) != null) {
+            listener.onError("A stack can't contain two children with the same id");
+            return;
+        }
         final ViewController toRemove = stack.peek();
         if (size() > 0) backButtonHelper.addToPushedChild(child);
         child.setParentController(this);
@@ -408,7 +412,7 @@ public class StackController extends ParentController<StackLayout> {
 
     @Override
     public int getTopInset(ViewController child) {
-        return resolveChildOptions(child).topBar.isHiddenOrDrawBehind() ? 0 : topBarController.getHeight();
+        return presenter.getTopInset(resolveChildOptions(child));
     }
 
     @RestrictTo(RestrictTo.Scope.TESTS)

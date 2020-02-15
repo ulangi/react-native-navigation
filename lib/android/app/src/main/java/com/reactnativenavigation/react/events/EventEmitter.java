@@ -1,4 +1,4 @@
-package com.reactnativenavigation.react;
+package com.reactnativenavigation.react.events;
 
 import android.util.Log;
 
@@ -15,6 +15,7 @@ public class EventEmitter {
     private static final String AppLaunched = "RNN.AppLaunched";
     private static final String CommandCompleted = "RNN.CommandCompleted";
     private static final String BottomTabSelected = "RNN.BottomTabSelected";
+    private static final String BottomTabPressed = "RNN.BottomTabPressed";
     private static final String ComponentDidAppear = "RNN.ComponentDidAppear";
     private static final String ComponentDidDisappear = "RNN.ComponentDidDisappear";
     private static final String NavigationButtonPressed = "RNN.NavigationButtonPressed";
@@ -28,20 +29,22 @@ public class EventEmitter {
     }
 
     public void appLaunched() {
-        emit(AppLaunched);
+        emit(EventEmitter.AppLaunched, Arguments.createMap());
     }
 
-    public void emitComponentDidDisappear(String id, String componentName) {
+    public void emitComponentDidDisappear(String id, String componentName, ComponentType type) {
         WritableMap event = Arguments.createMap();
         event.putString("componentId", id);
         event.putString("componentName", componentName);
+        event.putString("componentType", type.getName());
         emit(ComponentDidDisappear, event);
     }
 
-    public void emitComponentDidAppear(String id, String componentName) {
+    public void emitComponentDidAppear(String id, String componentName, ComponentType type) {
         WritableMap event = Arguments.createMap();
         event.putString("componentId", id);
         event.putString("componentName", componentName);
+        event.putString("componentType", type.getName());
         emit(ComponentDidAppear, event);
     }
 
@@ -57,6 +60,12 @@ public class EventEmitter {
         event.putInt("unselectedTabIndex", unselectedTabIndex);
         event.putInt("selectedTabIndex", selectedTabIndex);
         emit(BottomTabSelected, event);
+    }
+
+    public void emitBottomTabPressed(int tabIndex) {
+        WritableMap event = Arguments.createMap();
+        event.putInt("tabIndex", tabIndex);
+        emit(BottomTabPressed, event);
     }
 
     public void emitCommandCompleted(String commandName, String commandId, long completionTime) {
@@ -78,10 +87,6 @@ public class EventEmitter {
         WritableMap event = Arguments.createMap();
         event.putString("componentId", componentId);
         emit(ScreenPopped, event);
-    }
-
-    private void emit(String eventName) {
-        emit(eventName, Arguments.createMap());
     }
 
     private void emit(String eventName, WritableMap data) {

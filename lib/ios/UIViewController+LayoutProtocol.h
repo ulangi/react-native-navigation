@@ -16,7 +16,7 @@ typedef void (^RNNReactViewReadyCompletionBlock)(void);
 
 - (void)mergeOptions:(RNNNavigationOptions *)options;
 
-- (void)mergeChildOptions:(RNNNavigationOptions *)options;
+- (void)mergeChildOptions:(RNNNavigationOptions *)options child:(UIViewController *)child;
 
 - (RNNNavigationOptions *)resolveOptions;
 
@@ -27,6 +27,10 @@ typedef void (^RNNReactViewReadyCompletionBlock)(void);
 - (void)overrideOptions:(RNNNavigationOptions *)options;
 
 - (void)readyForPresentation;
+
+- (void)componentDidAppear;
+
+- (void)componentDidDisappear;
 
 @property (nonatomic, retain) RNNBasePresenter* presenter;
 @property (nonatomic, retain) RNNLayoutInfo* layoutInfo;
